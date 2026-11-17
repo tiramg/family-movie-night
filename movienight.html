@@ -139,7 +139,7 @@
       btn.dataset.armed = '1';
       btn.textContent = 'We watched it Sunday? Tap again to move it off the list';
       btn.style.color = '#e4572e';
-      setTimeout(function(){ if(btn.isConnected){ delete btn.dataset.armed; btn.textContent = '✓ Watched it'; btn.style.color = ''; } }, 3500);
+      setTimeout(function(){ if(btn.isConnected){ delete btn.dataset.armed; btn.textContent = '✓ Watched it'; btn.style.color = ''; } }, 6000);
     } else { setWatched(row, true); }
   }
   function del(row, btn){
@@ -149,7 +149,7 @@
       btn.dataset.armed = '1';
       btn.textContent = '\u26a0 Tap again to delete';
       btn.style.color = '#e4572e';
-      setTimeout(function(){ if(btn.isConnected){ delete btn.dataset.armed; btn.textContent = '🗑 Delete'; btn.style.color = ''; } }, 3000);
+      setTimeout(function(){ if(btn.isConnected){ delete btn.dataset.armed; btn.textContent = '🗑 Delete'; btn.style.color = ''; } }, 6000);
     } else { api('api/delete', { row: row }); }
   }
   load();
