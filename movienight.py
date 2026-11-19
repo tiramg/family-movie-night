@@ -43,6 +43,10 @@ def vote_movie(row):
     return _call({"action": "vote", "row": row})
 
 
+def unvote_movie(row):
+    return _call({"action": "unvote", "row": row})
+
+
 def set_watched(row, watched):
     return _call({"action": "watched", "row": row, "watched": bool(watched)})
 

@@ -43,6 +43,8 @@
   .votebtn { margin-left:auto; flex:none; padding:13px 22px; font-size:16px; background:#e4572e; color:#fff; border-radius:14px;
     box-shadow:0 6px 18px #e4572e55; }
   .votebtn:active { transform:scale(.95); }
+  .votebtn.voted { background:#2e7d5b; box-shadow:0 6px 18px #2e7d5b55; }
+  .votebtn[disabled] { opacity:.55; }
   .smallbtns { margin-top:10px; border-top:1px solid #ffffff12; padding-top:8px; display:flex; gap:18px; }
   .linkbtn { background:none; border:0; color:#8b939e; font-size:13px; font-weight:600; cursor:pointer; padding:4px 0; text-align:left; }
   .linkbtn:active { color:#ffffff; }
@@ -69,7 +71,7 @@
       onkeydown="if(event.key==='Enter')addMovie()">
     <button class="btn addbtn" onclick="addMovie()">Add</button>
   </div>
-  <p class="hint">Tap <b>Vote</b> on the movies you want to watch. Most votes goes to the top.</p>
+  <p class="hint">Tap <b>Vote</b> on the movies you want to watch — one vote per movie. Tap <b>✓ Voted</b> again to take your vote back. Most votes goes to the top.</p>
 
   <div id="list"><div class="loading">Loading movies…</div></div>
   <div id="watched"></div>
@@ -79,6 +81,15 @@
 
 <script>
   var movies = [];
+  // One vote per movie per person: this device remembers which titles it has
+  // voted for (keyed by title, so it survives list reordering). Tapping a
+  // voted movie again takes the vote back.
+  function norm(t){ return String(t || '').trim().toLowerCase(); }
+  function getVoted(){ try { return JSON.parse(localStorage.getItem('fmn_voted') || '[]'); } catch(e){ return []; } }
+  function setVoted(a){ try { localStorage.setItem('fmn_voted', JSON.stringify(a)); } catch(e){} }
+  function hasVoted(t){ return getVoted().indexOf(norm(t)) >= 0; }
+  function markVoted(t){ var a = getVoted(); if (a.indexOf(norm(t)) < 0) { a.push(norm(t)); setVoted(a); } }
+  function unmarkVoted(t){ setVoted(getVoted().filter(function(x){ return x !== norm(t); })); }
   function esc(s){ return s.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function render(data){
     movies = data || [];
@@ -92,7 +103,9 @@
         + '<div class="titlerow"><div class="rank">' + (i+1) + '</div><div class="title">' + esc(m.title) + '</div></div>'
         + '<div class="ctrlrow"><div class="votes"><span class="vnum">' + m.votes + '</span><span class="vlab">VOTES</span></div>'
         + (i===0 && m.votes>0 ? '<div class="crown">★ TOP PICK</div>' : '')
-        + '<button class="btn votebtn" onclick="vote(' + m.row + ',this)">Vote</button></div>'
+        + (hasVoted(m.title)
+            ? '<button class="btn votebtn voted" onclick="toggleVote(' + m.row + ',this)">✓ Voted</button></div>'
+            : '<button class="btn votebtn" onclick="toggleVote(' + m.row + ',this)">Vote</button></div>')
         + '<div class="smallbtns"><button class="linkbtn" onclick="askWatched(' + m.row + ',this)">✓ Watched it</button></div>'
         + '</div>';
     });
@@ -128,9 +141,17 @@
     var el = document.getElementById('newTitle');
     var t = el.value.trim(); if(!t) return;
     el.value='';
+    markVoted(t); // adding a movie counts as your vote for it
     api('api/add', { title: t });
   }
-  function vote(row, btn){ if(btn) btn.textContent='\u2713'; api('api/vote', { row: row }); }
+  function toggleVote(row, btn){
+    var m = null;
+    for (var i = 0; i < movies.length; i++) if (movies[i].row === row) { m = movies[i]; break; }
+    if (!m) return;
+    if (btn) btn.disabled = true; // one request at a time — no double-tap doubles
+    if (hasVoted(m.title)) { unmarkVoted(m.title); api('api/unvote', { row: row }); }
+    else { markVoted(m.title); api('api/vote', { row: row }); }
+  }
   function setWatched(row, w){ api('api/watched', { row: row, watched: w }); }
   function askWatched(row, btn){
     // Two-tap confirm: moving a movie off the list is deliberate, never one stray tap.

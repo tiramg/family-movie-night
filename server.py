@@ -13,6 +13,7 @@ from movienight import (
     list_movies as mn_list,
     add_movie as mn_add,
     vote_movie as mn_vote,
+    unvote_movie as mn_unvote,
     set_watched as mn_watched,
     delete_movie as mn_delete,
 )
@@ -60,6 +61,7 @@ class Handler(BaseHTTPRequestHandler):
         actions = {
             "/api/add": "add", "/movienight/api/add": "add",
             "/api/vote": "vote", "/movienight/api/vote": "vote",
+            "/api/unvote": "unvote", "/movienight/api/unvote": "unvote",
             "/api/watched": "watched", "/movienight/api/watched": "watched",
             "/api/delete": "delete", "/movienight/api/delete": "delete",
         }
@@ -73,6 +75,8 @@ class Handler(BaseHTTPRequestHandler):
                 result = mn_add(str(payload.get("title", "")))
             elif action == "vote":
                 result = mn_vote(int(payload.get("row")))
+            elif action == "unvote":
+                result = mn_unvote(int(payload.get("row")))
             elif action == "watched":
                 result = mn_watched(int(payload.get("row")), bool(payload.get("watched")))
             else:
