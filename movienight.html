@@ -30,6 +30,9 @@
     border:1px solid #ffffff24; border-radius:20px; padding:16px 18px 12px; margin:12px 0;
     box-shadow:0 10px 30px #00000045; }
   .titlerow { display:flex; align-items:flex-start; gap:12px; }
+  .poster { width:46px; height:68px; border-radius:8px; object-fit:cover; flex:none; background:#ffffff14; box-shadow:0 4px 12px #00000055; }
+  a.linkbtn { text-decoration:none; display:inline-block; }
+  .trailer { color:#ffc857 !important; }
   .rank { font-family:'Fraunces',serif; font-size:22px; font-weight:900; color:#ffc857; width:26px; text-align:center; flex:none; padding-top:2px; }
   .title { flex:1; min-width:0; font-size:22px; font-weight:600; line-height:1.3; color:#ffffff;
     overflow-wrap:break-word; word-break:normal; }
@@ -100,13 +103,17 @@
     if (!active.length) h = '<div class="empty">No movies yet.<br>Add the first title above! 🎬</div>';
     active.forEach(function(m, i){
       h += '<div class="card' + (i===0 && m.votes>0 ? ' top' : '') + '">'
-        + '<div class="titlerow"><div class="rank">' + (i+1) + '</div><div class="title">' + esc(m.title) + '</div></div>'
+        + '<div class="titlerow"><div class="rank">' + (i+1) + '</div>'
+        + (m.poster ? '<img class="poster" src="' + esc(m.poster) + '" alt="" loading="lazy">' : '')
+        + '<div class="title">' + esc(m.title) + '</div></div>'
         + '<div class="ctrlrow"><div class="votes"><span class="vnum">' + m.votes + '</span><span class="vlab">VOTES</span></div>'
         + (i===0 && m.votes>0 ? '<div class="crown">★ TOP PICK</div>' : '')
         + (hasVoted(m.title)
             ? '<button class="btn votebtn voted" onclick="toggleVote(' + m.row + ',this)">✓ Voted</button></div>'
             : '<button class="btn votebtn" onclick="toggleVote(' + m.row + ',this)">Vote</button></div>')
-        + '<div class="smallbtns"><button class="linkbtn" onclick="askWatched(' + m.row + ',this)">✓ Watched it</button></div>'
+        + '<div class="smallbtns">'
+        + (m.trailer ? '<a class="linkbtn trailer" href="' + esc(m.trailer) + '" target="_blank" rel="noopener">▶ Trailer</a>' : '')
+        + '<button class="linkbtn" onclick="askWatched(' + m.row + ',this)">✓ Watched it</button></div>'
         + '</div>';
     });
     document.getElementById('list').innerHTML = h;
@@ -114,7 +121,9 @@
     if (watched.length){
       w = '<div class="watchedsec"><h2>Watched</h2>';
       watched.forEach(function(m){
-        w += '<div class="card wcard"><div class="titlerow"><div class="title">' + esc(m.title) + '</div></div>'
+        w += '<div class="card wcard"><div class="titlerow">'
+          + (m.poster ? '<img class="poster" src="' + esc(m.poster) + '" alt="" loading="lazy">' : '')
+          + '<div class="title">' + esc(m.title) + '</div></div>'
           + '<div class="ctrlrow"><div class="votes"><span class="vnum">' + m.votes + '</span><span class="vlab">VOTES</span></div></div>'
           + '<div class="smallbtns"><button class="linkbtn" onclick="setWatched(' + m.row + ',false)">↩ Put it back</button>'
           + '<button class="linkbtn" onclick="del(' + m.row + ',this)">🗑 Delete</button></div></div>';
