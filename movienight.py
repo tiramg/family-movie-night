@@ -66,13 +66,13 @@ def _fetch_meta(title):
                 meta["poster"] = art.replace("100x100bb.jpg", "400x400bb.jpg")
             if item.get("previewUrl"):
                 meta["trailer"] = item["previewUrl"]
-    except Exception as exc:
-        meta["_err"] = "itunes: " + str(exc)[:100]
+    except Exception:
+        pass
     if not meta["poster"]:
         try:
             meta["poster"] = _wiki_poster(title)
-        except Exception as exc:
-            meta["_err"] = meta.get("_err", "") + " wiki: " + str(exc)[:100]
+        except Exception:
+            pass
     _meta_cache[key] = meta
     return meta
 
