@@ -33,6 +33,7 @@ def _call(payload):
 
 
 # ---- Poster / trailer metadata (iTunes Search API, no key needed) ----
+UA = "FamilyMovieNight/1.0 (https://family-movie-night-nybr.onrender.com)"
 _meta_cache = {}
 
 
@@ -53,7 +54,7 @@ def _fetch_meta(title):
         )
         req = urllib.request.Request(
             "https://itunes.apple.com/search?" + q,
-            headers={"User-Agent": "FamilyMovieNight/1.0"},
+            headers={"User-Agent": UA},
         )
         with urllib.request.urlopen(req, timeout=6) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -65,13 +66,13 @@ def _fetch_meta(title):
                 meta["poster"] = art.replace("100x100bb.jpg", "400x400bb.jpg")
             if item.get("previewUrl"):
                 meta["trailer"] = item["previewUrl"]
-    except Exception:
-        pass
+    except Exception as exc:
+        meta["_err"] = "itunes: " + str(exc)[:100]
     if not meta["poster"]:
         try:
             meta["poster"] = _wiki_poster(title)
-        except Exception:
-            pass
+        except Exception as exc:
+            meta["_err"] = meta.get("_err", "") + " wiki: " + str(exc)[:100]
     _meta_cache[key] = meta
     return meta
 
@@ -80,7 +81,7 @@ def _wiki_get(params):
     q = urllib.parse.urlencode(params)
     req = urllib.request.Request(
         "https://en.wikipedia.org/w/api.php?" + q,
-        headers={"User-Agent": "FamilyMovieNight/1.0"},
+        headers={"User-Agent": UA},
     )
     with urllib.request.urlopen(req, timeout=6) as resp:
         return json.loads(resp.read().decode("utf-8"))
