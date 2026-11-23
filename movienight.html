@@ -88,8 +88,8 @@
   // voted for (keyed by title, so it survives list reordering). Tapping a
   // voted movie again takes the vote back.
   function norm(t){ return String(t || '').trim().toLowerCase(); }
-  function getVoted(){ try { return JSON.parse(localStorage.getItem('fmn_voted') || '[]'); } catch(e){ return []; } }
-  function setVoted(a){ try { localStorage.setItem('fmn_voted', JSON.stringify(a)); } catch(e){} }
+  function getVoted(){ try { return JSON.parse(localStorage.getItem('fmn_voted_r2') || '[]'); } catch(e){ return []; } }
+  function setVoted(a){ try { localStorage.setItem('fmn_voted_r2', JSON.stringify(a)); } catch(e){} }
   function hasVoted(t){ return getVoted().indexOf(norm(t)) >= 0; }
   function markVoted(t){ var a = getVoted(); if (a.indexOf(norm(t)) < 0) { a.push(norm(t)); setVoted(a); } }
   function unmarkVoted(t){ setVoted(getVoted().filter(function(x){ return x !== norm(t); })); }
