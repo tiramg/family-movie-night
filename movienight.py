@@ -36,6 +36,31 @@ def _call(payload):
 UA = "FamilyMovieNight/1.0 (https://family-movie-night-nybr.onrender.com)"
 _meta_cache = {}
 
+# Hand-picked posters (verified 2026-11-25) for titles the strict automatic
+# matcher deliberately skips: remakes / same-name films (Resident Evil, Top
+# Gun, Brewster's Millions, Twister), titles entered without their "The"
+# (The Matrix, The Terminator, The Ballad of Songbirds and Snakes), and the
+# obscure Christmas at the Kringles. Each URL was checked live (HTTP 200,
+# image) against the film's Wikipedia poster file before being pinned here.
+POSTER_OVERRIDES = {
+    "christmas at the kringles": "https://upload.wikimedia.org/wikipedia/en/3/3c/Christmas_at_the_kringles.jpg",
+    "resident evil": "https://upload.wikimedia.org/wikipedia/en/1/11/Resident_Evil_%282002%29_HQ_Movie_Poster.jpg",
+    "vision quest first episode": "https://upload.wikimedia.org/wikipedia/en/f/f0/Vision_Quest_%281985_film%29_poster.jpg",
+    "vision quest": "https://upload.wikimedia.org/wikipedia/en/f/f0/Vision_Quest_%281985_film%29_poster.jpg",
+    "top gun": "https://upload.wikimedia.org/wikipedia/en/4/46/Top_Gun_Movie.jpg",
+    "brewster's millions": "https://upload.wikimedia.org/wikipedia/en/5/5f/Brewsters_millions.jpg",
+    "office space": "https://upload.wikimedia.org/wikipedia/en/8/8e/Office_space_poster.jpg",
+    "pulp fiction": "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg",
+    "matrix": "https://upload.wikimedia.org/wikipedia/en/d/db/The_Matrix.png",
+    "the matrix": "https://upload.wikimedia.org/wikipedia/en/d/db/The_Matrix.png",
+    "terminator": "https://upload.wikimedia.org/wikipedia/en/6/6d/The_Terminator.png",
+    "the terminator": "https://upload.wikimedia.org/wikipedia/en/6/6d/The_Terminator.png",
+    "planes trains and automobiles": "https://upload.wikimedia.org/wikipedia/en/d/d6/Planes_trains_and_automobiles.jpg",
+    "twister": "https://upload.wikimedia.org/wikipedia/en/a/a5/Twistermovieposter.jpg",
+    "ballad of the songbirds and snakes": "https://upload.wikimedia.org/wikipedia/en/9/96/The_Hunger_Games_-_The_Ballad_of_Songbirds_%26_Snakes_official_poster.jpg",
+    "the ballad of the songbirds and snakes": "https://upload.wikimedia.org/wikipedia/en/9/96/The_Hunger_Games_-_The_Ballad_of_Songbirds_%26_Snakes_official_poster.jpg",
+}
+
 
 def _fetch_meta(title):
     """Poster + trailer for a title. Trailer falls back to a YouTube search
@@ -48,6 +73,10 @@ def _fetch_meta(title):
         "trailer": "https://www.youtube.com/results?search_query="
         + urllib.parse.quote_plus(title + " official trailer"),
     }
+    if key in POSTER_OVERRIDES:
+        meta["poster"] = POSTER_OVERRIDES[key]
+        _meta_cache[key] = meta
+        return meta
     try:
         q = urllib.parse.urlencode(
             {"term": title, "media": "movie", "limit": 1, "country": "US"}
