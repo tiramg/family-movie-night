@@ -44,9 +44,9 @@ _meta_cache = {}
 # image) against the film's Wikipedia poster file before being pinned here.
 POSTER_OVERRIDES = {
     "christmas at the kringles": "https://upload.wikimedia.org/wikipedia/en/3/3c/Christmas_at_the_kringles.jpg",
-    "resident evil": "https://upload.wikimedia.org/wikipedia/en/1/11/Resident_Evil_%282002%29_HQ_Movie_Poster.jpg",
-    "vision quest first episode": "https://upload.wikimedia.org/wikipedia/en/f/f0/Vision_Quest_%281985_film%29_poster.jpg",
-    "vision quest": "https://upload.wikimedia.org/wikipedia/en/f/f0/Vision_Quest_%281985_film%29_poster.jpg",
+    "resident evil": "https://upload.wikimedia.org/wikipedia/en/3/3c/Resident_Evil_2026_film_poster.png",  # Tiram 2026-11-25: the NEW (2026, Zach Cregger) film, not the 2002 one
+    "vision quest first episode": "https://upload.wikimedia.org/wikipedia/en/d/d5/VisionQuest_logo.jpg",  # Tiram 2026-11-25: the Marvel TV series, not the 1985 film
+    "vision quest": "https://upload.wikimedia.org/wikipedia/en/d/d5/VisionQuest_logo.jpg",
     "top gun": "https://upload.wikimedia.org/wikipedia/en/4/46/Top_Gun_Movie.jpg",
     "brewster's millions": "https://upload.wikimedia.org/wikipedia/en/5/5f/Brewsters_millions.jpg",
     "office space": "https://upload.wikimedia.org/wikipedia/en/8/8e/Office_space_poster.jpg",
